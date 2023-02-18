@@ -409,6 +409,27 @@ class SynapseAdmin(ApiRequest):
             "user_id": _user_id
         })
 
+    def user_list_paginate(self, _from, _limit, _guests, _deactivated,
+                           _name, _user_id):
+        """Returns a list users after paginating everything
+        """
+        users = []
+        last_response = None
+        while True:
+            response = self.user_list(_from, _limit, _guests, _deactivated,
+                                  _name, _user_id)
+            if "next_token" in response.keys() and "users" in response.keys():
+                users.extend(response["users"])
+                _from = response["next_token"]
+                continue # explicitly end current loop
+            else:
+                last_response = response
+                break # end of list, leave loop
+        # minor hack to be backwards compatible with normal API results
+        last_response["users"] = users
+        response = last_response
+        return response
+
     def user_membership(self, user_id, return_aliases, matrix_api):
         """Get a list of rooms the given user is member of
 

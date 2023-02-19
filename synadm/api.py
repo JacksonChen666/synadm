@@ -1245,24 +1245,17 @@ class SynapseAdmin(ApiRequest):
 
         # A regular expression was supplied to match receivers.
         if regex:
-            outputs = []
-            response = self.user_list(0, paginate, True, False, "", "")
-            if "users" not in response:
-                return
-            while True:
-                for user in response["users"]:
-                    if re.match(receivers, user["name"]):
-                        data["user_id"] = user["name"]
-                        outputs.append(
-                            self.query(
-                                "post", "v1/send_server_notice", data=data
-                            )
+            all_users_response = self.user_list_paginate(0, paginate, True,
+                                                         False, "", "")
+            responses = []
+            for user in all_users_response["users"]:
+                if re.match(receivers, user["name"]):
+                    responses.append(
+                        self.query(
+                            "post", "v1/send_server_notice", data=data
                         )
-
-                if "next_token" not in response:
-                    return outputs
-                response = self.user_list(response["next_token"],
-                                          100, True, False, "", "")
+                    )
+            return responses
         # Only a single user ID was supplied as receiver
         else:
             data["user_id"] = receivers

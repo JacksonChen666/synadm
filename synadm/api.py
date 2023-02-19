@@ -409,26 +409,18 @@ class SynapseAdmin(ApiRequest):
             "user_id": _user_id
         })
 
-    def user_list_paginate(self, _from, _limit, _guests, _deactivated,
-                           _name, _user_id):
-        """Returns a list users after paginating everything
+    def user_list_paginate(self, _limit, _guests, _deactivated,
+                           _name, _user_id, _from="0"):
+        """Yields API responses for all of the pagination.
+
+        Args:
+            _from (string): Opaque string
         """
-        users = []
-        last_response = None
-        while True:
+        while _from is not None:
             response = self.user_list(_from, _limit, _guests, _deactivated,
-                                  _name, _user_id)
-            if "next_token" in response.keys() and "users" in response.keys():
-                users.extend(response["users"])
-                _from = response["next_token"]
-                continue # explicitly end current loop
-            else:
-                last_response = response
-                break # end of list, leave loop
-        # minor hack to be backwards compatible with normal API results
-        last_response["users"] = users
-        response = last_response
-        return response
+                                      _name, _user_id)
+            yield response
+            _from = response["next_token"] if "next_token" in response.keys() else None
 
     def user_membership(self, user_id, return_aliases, matrix_api):
         """Get a list of rooms the given user is member of
@@ -1245,16 +1237,17 @@ class SynapseAdmin(ApiRequest):
 
         # A regular expression was supplied to match receivers.
         if regex:
-            all_users_response = self.user_list_paginate(0, paginate, True,
+            all_users_responses = self.user_list_paginate(0, paginate, True,
                                                          False, "", "")
             responses = []
-            for user in all_users_response["users"]:
-                if re.match(receivers, user["name"]):
-                    responses.append(
-                        self.query(
-                            "post", "v1/send_server_notice", data=data
+            for all_users_response in all_users_responses:
+                for user in all_users_response["users"]:
+                    if re.match(receivers, user["name"]):
+                        responses.append(
+                            self.query(
+                                "post", "v1/send_server_notice", data=data
+                            )
                         )
-                    )
             return responses
         # Only a single user ID was supplied as receiver
         else:

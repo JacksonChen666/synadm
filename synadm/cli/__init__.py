@@ -64,7 +64,7 @@ def json_pretty(data):
 
 
 def json_minify(data):
-    return json.dumps(data, separator=(",", ":"))
+    return json.dumps(data, separators=(",", ":"))
 
 
 class APIHelper:

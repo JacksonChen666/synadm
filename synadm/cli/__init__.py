@@ -37,7 +37,7 @@ output_format_help = """The 'human' mode gives a tabular or list view depending
 on the fetched data, but often needs a lot of horizontal space to display
 correctly. 'json' returns formatted json. 'minified' is minified json, suitable
 for scripting purposes. 'pprint' shows a formatted output with the help of
-Python's built-in pprint module.  'yaml' is a compromise between human- and
+Python's built-in pprint module. 'yaml' is a compromise between human- and
 machine-readable output, it doesn't need as much terminal width as 'human' does
 and is the default on fresh installations."""
 

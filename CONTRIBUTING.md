@@ -45,7 +45,7 @@ No matter if you're a programmer or not there are many ways to contribute to the
 There are several ways to submit your work.
 
 - Clone the repo, create a feature branch and submit a pull-request.
-  - Consider enabling the [Allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork) option. We will deal with this permission responsibly. It proved to be a useful option for working together in the past and might even speed up getting a PR merged.
+  - Consider having the [Allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork) option enabled. We will deal with this permission responsibly. It proved to be a useful option for working together in the past and might even speed up getting a PR merged.
 - If you're not familiar with using git or just want to submit a smaller change (like a correction to the docs), use the “Edit file” button in the upper-right while viewing a file directly on the GitHub web interface. You can automatically send us a pull request for your changes.
 - Next to the "Edit file" button you'll find another option called "Open with github.dev" which opens a "Visual Studio Code" editor within your browser.
 

@@ -35,7 +35,7 @@ No matter if you're a programmer or not there are many ways to contribute to the
 ### Programming
 
 * Pick an open issue on GitHub or an unticked feature from the [Implementation Status / Commands List](README.md#implementation-status--commands-list) chapter, start implementing and submit a pull-request when you are ready to receive our feedback.
-  * If you'd like to receive "early feedback" even though you think your code is not ready yet, submit your PR already and set it to draft state. Ping us using @mention.
+  * If you'd like to receive "early feedback" even though you think your code is not ready yet, submit your PR already and set it to draft state. You can then mention us (`@` then followed by a GitHub username).
   * It's ok to open a Draft PR even if you don't want our feedback yet but it helps you in any way. We won't bother you until you ping us.
 * Read the [Synapse Admin API docs](https://github.com/matrix-org/synapse/tree/master/docs/admin_api), pick a feature, implement it and send a pull-request. Don't forget to check if the feature is listed in the [Implementation Status / Commands List](README.md#implementation-status--commands-list) chapter already. if not, please include the addition to the list in your PR (separate commit if possible).
 

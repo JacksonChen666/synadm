@@ -1,13 +1,13 @@
 #!/bin/bash
-python -m pip install --upgrade pip
-python -m pip install --upgrade build twine
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade build twine
 echo
 echo "Cleaning up dist directory."
 echo
 rm -rf dist/*
 echo
-python -m build
-python -m twine upload --repository testpypi dist/*
+python3 -m build
+python3 -m twine upload --repository testpypi dist/*
 echo
 echo "Test install:"
 echo "python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps synadm"

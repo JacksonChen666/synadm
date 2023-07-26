@@ -288,6 +288,33 @@ def delete(ctx, helper, room_id, new_room_user_id, room_name, message, block,
         click.echo("Abort.")
 
 
+@room.command(name="delete-status")
+@click.option(
+        "--type", "-t", "input_type", type=click.Choice(["room_id",
+                                                         "delete_id"]),
+        required=True,
+        help="""Specifies whether you're passing the room ID or the delete
+        ID""")
+@click.argument("room_or_delete_id")
+@click.pass_obj
+def delete_status(helper, input_type, room_or_delete_id):
+    """ Get room deletion status via either the room ID or the delete ID.
+
+    This requires the usage of the Room Delete v2 API. If you used v1 of the
+    Room Delete API, this is irrelevant.
+    """
+    output = None
+    if input_type == "room_id":
+        output = helper.api.room_delete_v2_status_by_room_id(
+                room_or_delete_id
+        )
+    elif input_type == "delete_id":
+        output = helper.api.room_delete_v2_status_by_delete_id(
+                room_or_delete_id
+        )
+    helper.output(output)
+
+
 @room.command(name="search")
 @click.argument("search-term", type=str)
 @click.option(

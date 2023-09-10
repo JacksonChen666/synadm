@@ -1,22 +1,20 @@
 1.  `bump2version --no-tag <major|minor|patch>`
-2.  create your own tag with a shortlog
-3.  push
-4.  wait for CI to create release
-5.  do release notes (match style, generate release notes)
-6.  publish
-7.  (required once) install `build` and `twine` modules
-8.  `rm -rf dist/` (cleanup)
-9.  `python3 -m build`
-10. https://readthedocs.org/projects/synadm/versions/ and check if docs is
+2.  create your own tag with a shortlog (tag version must match specified
+    version)
+3.  (required once) install `build` and `twine` modules
+4.  `rm -r dist/` (cleanup)
+5.  `python3 -m build`
+6.  push
+7.  wait for CI to create release
+8.  do release notes (match style, generate release notes)
+9.  publish release
+10. `twine upload --repository pypi dist/*`
+11. https://readthedocs.org/projects/synadm/versions/ and check if docs is
     published/activated
-11. (requires prepared setup) `twine upload -r test-synadm dist/*`
-12. test install
-    `python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps synadm`
-13. if it works, `twine upload --repository pypi dist/*`
 
 done, things has been released.
 
-for step 8, please go generate an API token and setup `~/.pypirc`.
+for step 10, please go generate an API token and setup `~/.pypirc`.
 `testpypi` for test.pypi.org, `pypi` for pypi.org.
 
 `~/.pypirc` should be this

@@ -278,9 +278,7 @@ def prune_devices_cmd(helper, user_id, list_only, min_days, min_surviving,
 @click.option(
     "--no-logout", "-n", is_flag=True, default=False,
     help="Don't log user out of all sessions on all devices.")
-@click.option(
-    "--password", "-p", prompt=True, hide_input=True,
-    confirmation_prompt=True, help="New password.")
+@click.password_option(help="New password")
 @click.pass_obj
 def password_cmd(helper, user_id, password, no_logout):
     """ Change a user's password.

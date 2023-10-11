@@ -43,7 +43,7 @@ def regtok_list_cmd(helper, valid, datetime):
     """
     regtoks = helper.api.regtok_list(valid, datetime)
     if regtoks is None:
-        click.echo("Registration tokens could not be fetched.")
+        click.echo("Registration tokens could not be fetched.", err=True)
         raise SystemExit(1)
     if "registration_tokens" not in regtoks:
         # Display error
@@ -69,7 +69,7 @@ def regtok_details_cmd(helper, token, datetime):
     """
     regtok = helper.api.regtok_details(token, datetime)
     if regtok is None:
-        click.echo("Registration token could not be fetched.")
+        click.echo("Registration token could not be fetched.", err=True)
         raise SystemExit(1)
     helper.output(regtok)
 
@@ -104,7 +104,7 @@ def regtok_new(helper, token, length, uses_allowed, expiry_ts, expire_at):
         token, length, uses_allowed, expiry_ts, expire_at
     )
     if regtok is None:
-        click.echo("Registration token could not be created.")
+        click.echo("Registration token could not be created.", err=True)
         raise SystemExit(1)
     helper.output(regtok)
 
@@ -132,7 +132,7 @@ def regtok_update(helper, token, uses_allowed, expiry_ts, expire_at):
     regtok = helper.api.regtok_update(token, uses_allowed,
                                       expiry_ts, expire_at)
     if regtok is None:
-        click.echo("Registration token could not be created.")
+        click.echo("Registration token could not be created.", err=True)
         raise SystemExit(1)
     helper.output(regtok)
 
@@ -145,9 +145,9 @@ def regtok_delete(helper, token):
     """
     response = helper.api.regtok_delete(token)
     if response is None:
-        click.echo("Registration token could not be deleted.")
+        click.echo("Registration token could not be deleted.", err=True)
         raise SystemExit(1)
     if response == {}:
-        click.echo("Registration token successfully deleted.")
+        click.echo("Registration token successfully deleted.", err=True)
     else:
         helper.output(response)

@@ -98,12 +98,13 @@ def history_purge_cmd(helper, room_id, before_event_id, before_days, before,
                 raise SystemExit(1)
         else:
             if history_purged is None:
-                click.echo("History could not be purged.")
+                click.echo("History could not be purged.", err=True)
                 raise SystemExit(1)
             if "purge_id" in history_purged:
                 click.echo(
-                    "Use 'synadm history purge-status {}' to get "
-                    "status of purge job.".format(history_purged["purge_id"])
+                    "Use 'synadm history purge-status {}' to get status of"
+                    "purge job.".format(history_purged["purge_id"]),
+                    err=True
                 )
             helper.output(history_purged)
 
@@ -124,10 +125,11 @@ def history_purge_status_cmd(helper, purge_id):
         helper.output(purge_history_status)
     else:
         if purge_history_status is None:
-            click.echo("History purge status could not be fetched.")
+            click.echo("History purge status could not be fetched.",
+                       err=True)
             raise SystemExit(1)
         if "status" in purge_history_status:
             click.echo("Status of history purge is {}.".format(
-                purge_history_status["status"]))
+                purge_history_status["status"]), err=True)
         else:
             helper.output(purge_history_status)

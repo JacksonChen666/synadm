@@ -332,7 +332,8 @@ def root(ctx, verbose, no_confirm, output, config_file):
     helper_loaded = ctx.obj.load()
     if ctx.invoked_subcommand != "config" and not helper_loaded:
         if no_confirm:
-            click.echo("Please setup synadm: " + sys.argv[0] + " config.")
+            click.echo("Please setup synadm: " + sys.argv[0] + " config.",
+                       err=True)
             raise SystemExit(2)
         else:
             ctx.invoke(config_cmd)
@@ -421,11 +422,12 @@ def config_cmd(helper, user_, token, base_url, admin_path, matrix_path,
                     output, timeout, server_discovery, homeserver,
                     ssl_verify]):
             click.echo(
-                "Missing config options for non-interactive configuration!"
+                "Missing config options for non-interactive configuration!",
+                err=True
             )
             raise SystemExit(3)
         else:
-            click.echo("Saving to config file.")
+            click.echo("Saving to config file.", err=True)
             if helper.write_config({
                 "user": user_,
                 "token": token,
@@ -442,7 +444,7 @@ def config_cmd(helper, user_, token, base_url, admin_path, matrix_path,
             else:
                 raise SystemExit(4)
 
-    click.echo("Running configurator...")
+    click.echo("Running configurator...", err=True)
     helper.write_config({
         "user": click.prompt(
             "Synapse admin user name",
@@ -488,7 +490,7 @@ def config_cmd(helper, user_, token, base_url, admin_path, matrix_path,
             type=click.Choice(["well-known", "dns"])),
     })
     if not helper.load():
-        click.echo("Configuration incomplete, quitting.")
+        click.echo("Configuration incomplete, quitting.", err=True)
         raise SystemExit(5)
 
 
@@ -499,7 +501,7 @@ def version(helper):
     """
     version_info = helper.api.version()
     if version_info is None:
-        click.echo("Version could not be fetched.")
+        click.echo("Version could not be fetched.", err=True)
         raise SystemExit(1)
     helper.output(version_info)
 

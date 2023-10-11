@@ -43,8 +43,8 @@ def delete(helper, group_id):
     if sure:
         group_del = helper.api.group_delete(group_id)
         if group_del is None:
-            click.echo("Group not deleted.")
+            click.echo("Group not deleted.", err=True)
             raise SystemExit(1)
         helper.output(group_del)
     else:
-        click.echo("Abort.")
+        click.echo("Abort.", err=True)

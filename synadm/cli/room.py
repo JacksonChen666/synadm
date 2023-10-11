@@ -64,7 +64,7 @@ def resolve(helper, room_id_or_alias, reverse):
         out = helper.matrix_api.room_get_id(room_id_or_alias)
 
     if out is None:
-        click.echo("Room resolve failed.")
+        click.echo("Room resolve failed.", err=True)
         raise SystemExit(1)
     helper.output(out)
 
@@ -97,14 +97,14 @@ def list_room_cmd(helper, from_, limit, name, sort, reverse):
     """
     rooms = helper.api.room_list(from_, limit, name, sort, reverse)
     if rooms is None:
-        click.echo("Rooms could not be fetched.")
+        click.echo("Rooms could not be fetched.", err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         if int(rooms["total_rooms"]) != 0:
             helper.output(rooms["rooms"])
         if "next_batch" in rooms:
             click.echo("There are more rooms than shown, use '--from {}'"
-                       .format(rooms["next_batch"]))
+                       .format(rooms["next_batch"]), err=True)
     else:
         helper.output(rooms)
 
@@ -117,7 +117,7 @@ def details(helper, room_id):
     """
     room_details = helper.api.room_details(room_id)
     if room_details is None:
-        click.echo("Room details could not be fetched.")
+        click.echo("Room details could not be fetched.", err=True)
         raise SystemExit(1)
     helper.output(room_details)
 
@@ -130,7 +130,7 @@ def state(helper, room_id):
     """
     room_state = helper.api.room_state(room_id)
     if room_state is None:
-        click.echo("Room state could not be fetched.")
+        click.echo("Room state could not be fetched.", err=True)
         raise SystemExit(1)
     helper.output(room_state)
 
@@ -181,7 +181,7 @@ def power_levels(helper, room_id, all_details, from_, limit, name, sort,
         from_, limit, name, sort, reverse, room_id, all_details,
         helper.output_format)
     if rooms_power is None:
-        click.echo("Rooms and power levels could not be fetched.")
+        click.echo("Rooms and power levels could not be fetched.", err=True)
         raise SystemExit(1)
 
     if helper.output_format == "human":
@@ -206,7 +206,7 @@ def members(helper, room_id):
     """
     room_members = helper.api.room_members(room_id)
     if room_members is None:
-        click.echo("Room members could not be fetched.")
+        click.echo("Room members could not be fetched.", err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         click.echo("Total members in room: {}"
@@ -258,10 +258,10 @@ def delete(ctx, helper, room_id, new_room_user_id, room_name, message, block,
     room_details = helper.api.room_details(room_id)
     if "errcode" in room_details.keys():
         if room_details["errcode"] == "M_NOT_FOUND":
-            click.echo("Room not found.")
+            click.echo("Room not found.", err=True)
             raise SystemExit(1)
         else:
-            click.echo("Unrecognized error")
+            click.echo("Unrecognized error", err=True)
             helper.output(room_details)
             raise SystemExit(1)
     helper.output(room_details)
@@ -282,11 +282,11 @@ def delete(ctx, helper, room_id, new_room_user_id, room_name, message, block,
                 room_id, mxid, room_name,
                 message, block, not bool(no_purge))
         if room_del is None:
-            click.echo("Room not deleted.")
+            click.echo("Room not deleted.", err=True)
             raise SystemExit(1)
         helper.output(room_del)
     else:
-        click.echo("Abort.")
+        click.echo("Abort.", err=True)
 
 
 @room.command(name="delete-status")

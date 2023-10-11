@@ -80,7 +80,7 @@ def media_list_cmd(ctx, helper, room_id, user_id, from_, limit, sort, reverse,
     if room_id:
         media_list = helper.api.room_media_list(room_id)
         if media_list is None:
-            click.echo("Media list could not be fetched.")
+            click.echo("Media list could not be fetched.", err=True)
             raise SystemExit(1)
         helper.output(media_list)
     elif user_id:
@@ -126,7 +126,7 @@ def media_quarantine_cmd(helper, server_name, media_id, user_id, room_id):
             helper.config["base_url"])
         media_quarantined = helper.api.media_quarantine(fetched_name, media_id)
     elif server_name and not media_id:
-        click.echo("Media ID missing.")
+        click.echo("Media ID missing.", err=True)
         media_quarantined = None
     elif media_id and server_name:
         media_quarantined = helper.api.media_quarantine(server_name, media_id)
@@ -137,7 +137,7 @@ def media_quarantine_cmd(helper, server_name, media_id, user_id, room_id):
         media_quarantined = helper.api.user_media_quarantine(mxid)
 
     if media_quarantined is None:
-        click.echo("Media could not be quarantined.")
+        click.echo("Media could not be quarantined.", err=True)
         raise SystemExit(1)
     helper.output(media_quarantined)
 
@@ -168,13 +168,13 @@ def media_unquarantine_cmd(helper, server_name, media_id):
             helper.config["base_url"])
         unquarantinend = helper.api.media_unquarantine(fetched_name, media_id)
     elif server_name and not media_id:
-        click.echo("Media ID missing.")
+        click.echo("Media ID missing.", err=True)
         unquarantinend = None
     elif media_id and server_name:
         unquarantinend = helper.api.media_unquarantine(server_name, media_id)
 
     if unquarantinend is None:
-        click.echo("Media could not be removed from quarantine.")
+        click.echo("Media could not be removed from quarantine.", err=True)
         raise SystemExit(1)
     helper.output(unquarantinend)
 
@@ -187,7 +187,7 @@ def media_protect_cmd(helper, media_id):
     """
     media_protected = helper.api.media_protect(media_id)
     if media_protected is None:
-        click.echo("Media could not be protected.")
+        click.echo("Media could not be protected.", err=True)
         raise SystemExit(1)
     helper.output(media_protected)
 
@@ -217,7 +217,7 @@ def media_purge_cmd(helper, before_days, before, before_ts):
     """
     media_purged = helper.api.purge_media_cache(before_days, before, before_ts)
     if media_purged is None:
-        click.echo("Media cache could not be purged.")
+        click.echo("Media cache could not be purged.", err=True)
         raise SystemExit(1)
     helper.output(media_purged)
 
@@ -267,10 +267,11 @@ def media_delete_cmd(helper, media_id, before_days, before, before_ts,
         media_deleted = None
     elif media_id and delete_profiles:
         click.echo("Combination of --media-id and --delete-profiles not "
-                   "valid.")
+                   "valid.", err=True)
         media_deleted = None
     elif media_id and size:
-        click.echo("Combination of --media-id and --size not valid.")
+        click.echo("Combination of --media-id and --size not valid.",
+                   err=True)
         media_deleted = None
     elif media_id:
         media_deleted = helper.api.media_delete(server_name, media_id)
@@ -280,6 +281,6 @@ def media_delete_cmd(helper, media_id, before_days, before, before_ts,
         )
 
     if media_deleted is None:
-        click.echo("Media could not be deleted.")
+        click.echo("Media could not be deleted.", err=True)
         raise SystemExit(1)
     helper.output(media_deleted)

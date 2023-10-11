@@ -143,7 +143,7 @@ def notice_send_cmd(helper, from_file, batch_size, regex, preview_length,
     else:
         to = helper.generate_mxid(to)
         if to is None:
-            click.echo("The recipient you specified is invalid.")
+            click.echo("The recipient you specified is invalid.", err=True)
             return
         if not confirm_prompt():
             return

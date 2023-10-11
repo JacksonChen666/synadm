@@ -79,17 +79,17 @@ def list_user_cmd(helper, from_, limit, guests, deactivated, name, user_id,
     users = helper.api.user_list(from_, limit, guests, deactivated, name,
                                  mxid, admins)
     if users is None:
-        click.echo("Users could not be fetched.")
+        click.echo("Users could not be fetched.", err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         click.echo("Total users on homeserver (excluding deactivated): {}"
-                   .format(users["total"]))
+                   .format(users["total"]), err=True)
         if int(users["total"]) != 0:
             helper.output(users["users"])
         if "next_token" in users:
             click.echo("There are more users than shown, use '--from {}' "
-                       .format(users["next_token"]) +
-                       "to go to next page")
+                       .format(users["next_token"]) + "to go to next page",
+                       err=True)
     else:
         helper.output(users)
 
@@ -115,7 +115,7 @@ def deactivate(ctx, helper, user_id, gdpr_erase):
     - Removal from all joined rooms
     - Password reset
     - Deletion of third-party-IDs (to prevent the user requesting a password)
-    """)
+    """, err=True)
     mxid = helper.generate_mxid(user_id)
     ctx.invoke(user_details_cmd, user_id=mxid)
     ctx.invoke(membership, user_id=mxid)
@@ -130,18 +130,21 @@ def deactivate(ctx, helper, user_id, gdpr_erase):
     if sure:
         deactivated = helper.api.user_deactivate(mxid, gdpr_erase)
         if deactivated is None:
-            click.echo("User could not be {}.".format(m_erase_or_deact))
+            click.echo("User could not be {}.".format(m_erase_or_deact),
+                       err=True)
             raise SystemExit(1)
         if helper.output_format == "human":
             if deactivated["id_server_unbind_result"] == "success":
-                click.echo("User successfully {}.".format(m_erase_or_deact_p))
+                click.echo("User successfully {}."
+                           .format(m_erase_or_deact_p), err=True)
             else:
-                click.echo("Synapse returned: {}".format(
-                           deactivated["id_server_unbind_result"]))
+                click.echo("Synapse returned: {}"
+                           .format(deactivated["id_server_unbind_result"]),
+                           err=True)
         else:
             helper.output(deactivated)
     else:
-        click.echo("Abort.")
+        click.echo("Abort.", err=True)
 
 
 @user.command()
@@ -193,7 +196,8 @@ def deactivate_regex(ctx, helper, regex, gdpr_erase, dry_run, batch_size):
         for user in list_user_response["users"]:
             if pattern.match(user["name"]):
                 if dry_run:
-                    click.echo(f"Would deactivate: {user['name']}")
+                    click.echo(f"Would deactivate: {user['name']}",
+                               err=True)
                     continue
                 else:
                     ctx.invoke(deactivate, user_id=user["name"],
@@ -253,14 +257,16 @@ def prune_devices_cmd(helper, user_id, list_only, min_days, min_surviving,
     if len(devices_todelete) < 1:
         # We didn't find anything to do.
         if helper.output_format == "human":
-            click.echo(f"User {user_id} had no relevant devices to delete.")
+            click.echo(f"User {user_id} had no relevant devices to delete.",
+                       err=True)
         raise SystemExit(0)
     else:
         if helper.output_format == "human":
             keep_count = len(devices_data["devices"]) - len(devices_todelete)
             click.echo("User {} has {} device(s) marked for deletion "
                        "and {} device(s) to be kept alive."
-                       .format(user_id, len(devices_todelete), keep_count))
+                       .format(user_id, len(devices_todelete), keep_count),
+                       err=True)
 
     helper.output(devices_todelete)
     if not list_only:
@@ -275,7 +281,8 @@ def prune_devices_cmd(helper, user_id, list_only, min_days, min_surviving,
             raise SystemExit(1)
         if helper.output_format == "human":
             click.echo("User {} devices successfully deleted: {}."
-                       .format(user_id, ", ".join(devices_todelete_ids)))
+                       .format(user_id, ", ".join(devices_todelete_ids)),
+                       err=True)
 
 
 @user.command(name="password")
@@ -293,7 +300,7 @@ def password_cmd(helper, user_id, password, no_logout):
     mxid = helper.generate_mxid(user_id)
     changed = helper.api.user_password(mxid, password, no_logout)
     if changed is None:
-        click.echo("Password could not be reset.")
+        click.echo("Password could not be reset.", err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         if changed == {}:
@@ -320,7 +327,7 @@ def membership(helper, user_id, aliases):
     joined_rooms = helper.api.user_membership(mxid, aliases,
                                               helper.matrix_api)
     if joined_rooms is None:
-        click.echo("Membership could not be fetched.")
+        click.echo("Membership could not be fetched.", err=True)
         raise SystemExit(1)
 
     if helper.output_format == "human":
@@ -349,11 +356,12 @@ def user_search_cmd(ctx, search_term, from_, limit):
     as guest users. Also, compared to the original command, a case-insensitive
     search is done.
     """
-    click.echo("User search results for '{}':".format(search_term.lower()))
+    click.echo("User search results for '{}':".format(search_term.lower()),
+               err=True)
     ctx.invoke(list_user_cmd, from_=from_, limit=limit,
                name=search_term.lower(), deactivated=True, guests=True)
     click.echo("User search results for '{}':"
-               .format(search_term.capitalize()))
+               .format(search_term.capitalize()), err=True)
     ctx.invoke(list_user_cmd, from_=from_, limit=limit,
                name=search_term.capitalize(), deactivated=True, guests=True)
 
@@ -367,7 +375,7 @@ def user_details_cmd(helper, user_id):
     mxid = helper.generate_mxid(user_id)
     user_data = helper.api.user_details(mxid)
     if user_data is None:
-        click.echo("User details could not be fetched.")
+        click.echo("User details could not be fetched.", err=True)
         raise SystemExit(1)
     helper.output(user_data)
 
@@ -439,43 +447,45 @@ def modify(ctx, helper, user_id, password, password_prompt, display_name,
     """
     # sanity checks that can't easily be handled by Click.
     if password_prompt and password:
-        click.echo("Use either '-p' or '-P secret', not both.")
+        click.echo("Use either '-p' or '-P secret', not both.", err=True)
         raise SystemExit(1)
     if deactivation == "deactivate" and (password_prompt or password):
         click.echo(
-            "Deactivating a user and setting a password doesn't make sense.")
+            "Deactivating a user and setting a password doesn't make sense.",
+            err=True)
         raise SystemExit(1)
 
     mxid = helper.generate_mxid(user_id)
-    click.echo("Current user account settings:")
+    click.echo("Current user account settings:", err=True)
     ctx.invoke(user_details_cmd, user_id=mxid)
-    click.echo("User account settings to be modified:")
+    click.echo("User account settings to be modified:", err=True)
     for key, value in ctx.params.items():
         if key in ["user_id", "password", "password_prompt"]:  # skip these
             continue
         if key == "threepid":
             if value != ():
                 for t_key, t_val in value:
-                    click.echo(f"{key}: {t_key} {t_val}")
+                    click.echo(f"{key}: {t_key} {t_val}", err=True)
                     if t_key not in ["email", "msisdn"]:
                         helper.log.warning(
                             f"{t_key} is probably not a supported medium "
                             "type. Threepid medium types according to the "
                             "current matrix spec are: email, msisdn.")
         elif key == "user_type" and value == 'regular':
-            click.echo("user_type: null")
+            click.echo("user_type: null", err=True)
         elif value not in [None, {}, []]:  # only show non-empty (aka changed)
-            click.echo(f"{key}: {value}")
+            click.echo(f"{key}: {value}", err=True)
 
     if password_prompt:
         if helper.no_confirm:
             click.echo("Password prompt not available in non-interactive "
-                       "mode. Use -P.")
+                       "mode. Use -P.", err=True)
         else:
             password = click.prompt("Password", hide_input=True,
                                     confirmation_prompt=True)
     elif password:
-        click.echo("Password will be set as provided on command line.")
+        click.echo("Password will be set as provided on command line.",
+                   err=True)
     else:
         password = None
     sure = (
@@ -489,7 +499,7 @@ def modify(ctx, helper, user_id, password, password_prompt, display_name,
             avatar_url, admin, deactivation,
             'null' if user_type == 'regular' else user_type, lock)
         if modified is None:
-            click.echo("User could not be modified.")
+            click.echo("User could not be modified.", err=True)
             raise SystemExit(1)
         if helper.output_format == "human":
             if modified != {}:
@@ -500,7 +510,7 @@ def modify(ctx, helper, user_id, password, password_prompt, display_name,
         else:
             helper.output(modified)
     else:
-        click.echo("Abort.")
+        click.echo("Abort.", err=True)
 
 
 @user.command()
@@ -560,7 +570,7 @@ def user_media_cmd(helper, user_id, from_, limit, sort, reverse, datetime):
     media = helper.api.user_media(mxid, from_, limit, sort, reverse,
                                   datetime)
     if media is None:
-        click.echo("Media could not be fetched.")
+        click.echo("Media could not be fetched.", err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         click.echo("User has uploaded {} media blobs."
@@ -635,9 +645,9 @@ def user_login_cmd(helper, user_id, expire_days, expire, expire_ts,
         click.echo("""You are fetching an authentication token of a user,
                    which enables you to execute any Matrix command on their
                    behalf. Please respect their privacy and know what you are
-                   doing! Be responsible!\n""")
+                   doing! Be responsible!\n""", err=True)
         if user_login is None:
-            click.echo(f"Login as user {user_id} not successful.")
+            click.echo(f"Login as user {user_id} not successful.", err=True)
             raise SystemExit(1)
         else:
             helper.output(user_login)
@@ -664,7 +674,7 @@ def user_shadow_ban(helper, user_id, unban):
     mxid = helper.generate_mxid(user_id)
     user_ban = helper.api.user_shadow_ban(mxid, unban)
     if user_ban is None:
-        click.echo("Failed to shadow-ban: {}".format(user_id))
+        click.echo("Failed to shadow-ban: {}".format(user_id), err=True)
         raise SystemExit(1)
     if helper.output_format == "human":
         action = "shadow-ban"

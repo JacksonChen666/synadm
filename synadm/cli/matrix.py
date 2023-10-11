@@ -65,7 +65,7 @@ def login_cmd(helper, user_id, password):
         helper.output(login)
     else:
         if login is None:
-            click.echo("Matrix login failed.")
+            click.echo("Matrix login failed.", err=True)
             raise SystemExit(1)
         else:
             helper.output(login)
@@ -146,7 +146,7 @@ def raw_request_cmd(helper, endpoint, method, data, data_file, token, prompt):
     else:
         if raw_request is None:
             click.echo("The Matrix API's response was empty or JSON data "
-                       "could not be loaded.")
+                       "could not be loaded.", err=True)
             raise SystemExit(1)
         else:
             helper.output(raw_request)

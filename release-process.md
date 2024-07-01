@@ -4,7 +4,7 @@
 3.  (required once) install `build` and `twine` modules
 4.  `rm -r dist/` (cleanup)
 5.  `python3 -m build`
-6.  push
+6.  push with `--follow-tags`
 7.  wait for CI to create release
 8.  do release notes (match style, generate release notes)
 9.  publish release
